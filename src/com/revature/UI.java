@@ -154,7 +154,7 @@ public class UI {
                     case "3" -> {
                         System.out.println("Enter account id: ");
                         int accountId = getInt();
-                        printUserTransactions(bankingDao,accountId);
+                        printAccountTransactions(bankingDao,accountId);
                     }
                     case "9" -> flag = false;
                     default -> System.out.println("Did not receive a valid number.");
@@ -178,14 +178,14 @@ public class UI {
             System.out.println();
             switch (input) {
                 case "1" -> printUserDetails(userDao);
-                case "2" -> userChangeStatus(userDao, scanner);
+                case "2" -> employeeChangeAccountStatus(userDao, scanner);
                 case "9" -> flag = false;
                 default -> System.out.println("Did not receive a valid number.");
             }
         }
     }
 
-    public void userChangeStatus(BankingDao userDao, Scanner scanner) {
+    public void employeeChangeAccountStatus(BankingDao userDao, Scanner scanner) {
         System.out.println("*****************Change Account Status*****************");
         System.out.println("Enter Account ID: ");
         try {
@@ -344,7 +344,7 @@ public class UI {
                         System.out.println("Cannot process input.");
                     }
                 }
-                case "4" -> printUserTransactions(userDao,bankAccount.getAccount_id());
+                case "4" -> printAccountTransactions(userDao,bankAccount.getAccount_id());
                 case "9" -> flag = false;
                 default -> System.out.println("Please enter a number from one of the choices");
 
@@ -352,7 +352,7 @@ public class UI {
         }
     }
 
-    private void printUserTransactions(BankingDao bankingDao, int id) {
+    private void printAccountTransactions(BankingDao bankingDao, int id) {
         List<Transaction> transactions = bankingDao.viewTransactionsByAccountId(id);
         System.out.println("***********Bank Transactions***********");
         System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
