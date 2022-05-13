@@ -84,7 +84,7 @@ public class UI {
 
             }
         } catch (Exception e) {
-            System.out.println("Something went wrong, could not log in");
+            System.out.println("Something went wrong, automatically logged out.");
         }
 
     }
@@ -129,30 +129,39 @@ public class UI {
             System.out.println("**************************************");
             String input = scanner.next();
             System.out.println();
-                System.out.println("***********Bank Transactions***********");
+            System.out.println("***********Bank Transactions***********");
+            try {
                 switch (input) {
                     case "1" -> {
                         List<Transaction> transactions = bankingDao.viewAllTransactions();
+                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   |         Date        |%n");
+                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                         for (Transaction transaction : transactions) {
                             System.out.println(transaction);
                         }
+                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                     }
                     case "2" -> {
                         System.out.println("Enter transaction id: ");
                         int transactionId = getInt();
-                        System.out.println( bankingDao.viewTransactionById(transactionId));
+                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   |         Date        |%n");
+                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.println(bankingDao.viewTransactionById(transactionId));
+                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                     }
                     case "3" -> {
                         System.out.println("Enter account id: ");
                         int accountId = getInt();
-                        List<Transaction> transactions = bankingDao.viewTransactionsByAccountId(accountId);
-                        for (Transaction transaction : transactions) {
-                            System.out.println(transaction);
-                        }
+                        printUserTransactions(bankingDao,accountId);
                     }
                     case "9" -> flag = false;
                     default -> System.out.println("Did not receive a valid number.");
                 }
+            } catch (NullPointerException e) {
+                System.out.println("Cannot process input.");
+            }
         }
     }
 
@@ -181,7 +190,7 @@ public class UI {
         System.out.println("Enter Account ID: ");
         try {
             int accountID = getInt();
-            System.out.print("\nEnter 1: Approve \nEnter 2: Reject\n");
+            System.out.print("Enter 1: Approve \nEnter 2: Reject\n");
             System.out.println("Enter 9: Return");
             System.out.println("**************************************");
             String input = scanner.next();
@@ -190,17 +199,18 @@ public class UI {
                 case "1" -> userDao.approveAccount(accountID);
                 case "2" -> userDao.rejectAccount(accountID);
             }
+        } catch (NullPointerException e) {
+            System.out.println("Cannot process input.");
         } catch (Exception e) {
             System.out.println("Could not find account");
         }
     }
 
-    public void printUserDetails(BankingDao userDao) {
-
+    private void printUserDetails(BankingDao userDao) {
         String leftAlightFormat = "| %12s | %15s | %9s | %15s | %15s | %15s | %15s | %15s |%n";
         List<String[]> userInfo = userDao.getUserDetails();
         System.out.format("+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
-        System.out.format("| Account ID   | Account Name    | User ID   | Username        | First Name      | Last Name       | Balance         | Status          |%n");
+        System.out.format("|  Account ID  | Account Name    |  User ID  |     Username    |    First Name   |     Last Name   |     Balance     |      Status     |%n");
         System.out.format("+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
         for (String[] account : userInfo) {
             System.out.format(leftAlightFormat, account[0], account[1], account[2], account[3], account[4], account[5], account[6], account[7]);
@@ -252,15 +262,14 @@ public class UI {
                     if (!accountsMap.isEmpty()) {
                         System.out.println("Enter account number you wish to use: ");
                         try {
-
-                            int accNumber = scanner.nextInt();
+                            int accNumber = getInt();
                             if (accountsMap.containsKey(accNumber) && userDao.getBankAccountStatus(accNumber)) {
                                 customerBankAccountOptions(userDao, scanner, accountsMap.get(accNumber));
                             } else {
                                 System.out.println("You are not current authorized to use this account");
                             }
-                        } catch (InputMismatchException e) {
-                            System.out.println("Did not receive an appropriate input");
+                        } catch (NullPointerException e) {
+                            System.out.println("Cannot process input.");
                         }
                     }
                 }
@@ -290,7 +299,7 @@ public class UI {
                     System.out.println("***********Bank Deposit***********");
                     System.out.println("Enter amount to deposit: ");
                     try {
-                        double amount = scanner.nextDouble();
+                        double amount = getDouble();
                         if (amount <= 0) {
                             System.out.println("Cannot process deposit: " + amount);
                             continue;
@@ -298,8 +307,8 @@ public class UI {
                         userDao.deposit(bankAccount, amount);
                     } catch (SQLException e) {
                         System.out.println("Could not process your deposit");
-                    } catch (InputMismatchException e) {
-                        System.out.println("Amount could not be processed");
+                    } catch (NullPointerException e) {
+                        System.out.println("Cannot process input.");
                     }
                 }
                 case "2" -> {
@@ -312,8 +321,8 @@ public class UI {
                             continue;
                         }
                         userDao.withdraw(bankAccount, amount);
-                    } catch (InputMismatchException e) {
-                        System.out.println("Amount could not be processed");
+                    } catch (NullPointerException e) {
+                        System.out.println("Cannot process input.");
                     }
                 }
                 case "3" -> {
@@ -324,21 +333,18 @@ public class UI {
                         System.out.println("Enter account id to transfer to:");
                         int accountId = getInt();
                         if (amount <= 0) {
-                            System.out.println("Cannot process transfer: " + amount);
+                            System.out.println("Cannot process transfer");
                             continue;
                         }
                         BankAccount bankAccountTo = userDao.getBankAccountById(accountId);
                         userDao.transfer(bankAccount, bankAccountTo, amount);
                     } catch (SQLException e) {
                         System.out.println("No account by that id");
+                    } catch (NullPointerException e) {
+                        System.out.println("Cannot process input.");
                     }
                 }
-                case "4" -> {
-                    List<Transaction> transactions = userDao.viewTransactionsByAccountId(bankAccount.getAccount_id());
-                    for (Transaction transaction : transactions) {
-                        System.out.println(transaction);
-                    }
-                }
+                case "4" -> printUserTransactions(userDao,bankAccount.getAccount_id());
                 case "9" -> flag = false;
                 default -> System.out.println("Please enter a number from one of the choices");
 
@@ -346,21 +352,34 @@ public class UI {
         }
     }
 
-    public Double getDouble(){
+    private void printUserTransactions(BankingDao bankingDao, int id) {
+        List<Transaction> transactions = bankingDao.viewTransactionsByAccountId(id);
+        System.out.println("***********Bank Transactions***********");
+        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   |         Date        |%n");
+        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+        for (Transaction transaction : transactions) {
+            System.out.println(transaction);
+        }
+        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+    }
+
+    public Double getDouble() {
         Scanner scanner = new Scanner(System.in);
         try {
             return scanner.nextDouble();
         } catch (InputMismatchException e) {
-            System.out.println("Input not accepted");
+            scanner.nextLine();
         }
         return null;
     }
+
     public Integer getInt() {
         Scanner scanner = new Scanner(System.in);
         try {
             return scanner.nextInt();
         } catch (InputMismatchException e) {
-            System.out.println("Input not accepted");
+            scanner.nextLine();
         }
         return null;
     }
