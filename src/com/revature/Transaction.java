@@ -24,11 +24,11 @@ public class Transaction {
     @Override
     public String toString() {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        String leftAlightFormat = "| %12d | %10s | %15s | %10s | %13s | %10s | %10s |";
+        String leftAlightFormat = "| %12d | %10s | %15s | %10s | %13s | %19s | %10s |";
         if (type.equalsIgnoreCase("transfer")){
-            return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type, accountIdTo, status, date);
+            return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type, accountIdTo, status.equalsIgnoreCase("accepted") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m", date);
         }
-        return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type, "", status, date);
+        return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type, "", status.equalsIgnoreCase("accepted") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m", date);
     }
 
 }
