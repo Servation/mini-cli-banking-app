@@ -3,13 +3,17 @@ package com.revature;
 import java.text.DecimalFormat;
 
 public class Transaction {
-    private final int transactionId;
-    private final int accountId;
-    private final double amount;
-    private final String type;
-    private final int accountIdTo;
-    private final String status;
-    private final String date;
+    private int transactionId;
+    private int accountId;
+    private double amount;
+    private String type;
+    private int accountIdTo;
+    private String status;
+    private String date;
+
+    public Transaction() {
+
+    }
 
     public Transaction(int transactionId, int accountId, double amount, String type, int accountIdToo, String status, String date) {
         this.transactionId = transactionId;

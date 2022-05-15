@@ -20,7 +20,7 @@ public class ConnectionFactory {
             String pass = bundle.getString("password");
             try {
                 connection = DriverManager.getConnection(url, username, System.getenv(pass));
-                System.out.println("Connection established:");
+                System.out.println("Connection established");
             } catch (SQLException e) {
                 System.out.println("Failed to connect...");
                 e.printStackTrace();

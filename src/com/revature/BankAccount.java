@@ -32,11 +32,8 @@ public class BankAccount {
     @Override
     public String toString() {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
-        return
-                "Account ID:" + account_id + " | " +
-                        "Account: " + account_name + " | " +
-                        "Current Balance: " + decimalFormat.format(balance) + " | " +
-                        "Status: " + status;
+        String leftAlightFormat = "| %12d | %15s | %15s | %19s |";
+        return String.format(leftAlightFormat,account_id,account_name,decimalFormat.format(balance),status.equalsIgnoreCase("approved") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m");
     }
 
     public int getAccount_id() {

@@ -56,9 +56,11 @@ public class User {
 
     @Override
     public String toString() {
-        return "Name: " + firstName + " | " +
-                "Username:" + username + " | " +
-                "Email:" + email + " | " +
-                "ID=" + id;
+        String leftAlightFormat = "| %15s | %15s | %15s | %10d |";
+        return String.format(leftAlightFormat, firstName + " " + lastName, username, email, id);
+//        return "Name: " + firstName + " | " +
+//                "Username:" + username + " | " +
+//                "Email:" + email + " | " +
+//                "ID=" + id;
     }
 }

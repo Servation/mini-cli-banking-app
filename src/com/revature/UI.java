@@ -75,10 +75,10 @@ public class UI {
             User user = userDao.getUserByLogin(username, password);
             System.out.println();
             if (user == null) {
-                System.out.println(ANSI_YELLOW+"There is no user with that name or password"+ ANSI_RESET);
-                System.out.println(ANSI_YELLOW+"Leaving login..."+ ANSI_RESET);
+                System.out.println(ANSI_YELLOW + "There is no user with that name or password" + ANSI_RESET);
+                System.out.println(ANSI_YELLOW + "Leaving login..." + ANSI_RESET);
             } else {
-                System.out.println("Logged in...");
+                System.out.println(ANSI_BLUE + "Logged in..." + ANSI_RESET);
                 if (user.isemployee()) {
                     employeeLoggedIn(userDao, scanner, user);
                 } else {
@@ -87,7 +87,7 @@ public class UI {
 
             }
         } catch (Exception e) {
-            System.out.println(ANSI_YELLOW+"Something went wrong, automatically logged out."+ ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Something went wrong, automatically logged out." + ANSI_RESET);
         }
 
     }
@@ -113,7 +113,7 @@ public class UI {
                     System.out.println("Logging out...");
                     flag = false;
                 }
-                default -> System.out.println(ANSI_YELLOW+"Did not receive a valid number."+ ANSI_RESET);
+                default -> System.out.println(ANSI_YELLOW + "Did not receive a valid number." + ANSI_RESET);
 
             }
         }
@@ -160,10 +160,10 @@ public class UI {
                         printAccountTransactions(bankingDao, accountId);
                     }
                     case "9" -> flag = false;
-                    default -> System.out.println(ANSI_YELLOW+"Did not receive a valid number."+ ANSI_RESET);
+                    default -> System.out.println(ANSI_YELLOW + "Did not receive a valid number." + ANSI_RESET);
                 }
             } catch (NullPointerException e) {
-                System.out.println(ANSI_YELLOW+"Cannot process input."+ ANSI_RESET);
+                System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
             }
         }
     }
@@ -183,7 +183,7 @@ public class UI {
                 case "1" -> printUserDetails(userDao);
                 case "2" -> employeeChangeAccountStatus(userDao, scanner);
                 case "9" -> flag = false;
-                default -> System.out.println(ANSI_YELLOW+"Did not receive a valid number."+ ANSI_RESET);
+                default -> System.out.println(ANSI_YELLOW + "Did not receive a valid number." + ANSI_RESET);
             }
         }
     }
@@ -203,9 +203,9 @@ public class UI {
                 case "2" -> userDao.rejectAccount(accountID);
             }
         } catch (NullPointerException e) {
-            System.out.println(ANSI_YELLOW+"Cannot process input."+ ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
         } catch (Exception e) {
-            System.out.println(ANSI_YELLOW+"Could not find account"+ ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Could not find account" + ANSI_RESET);
         }
     }
 
@@ -224,11 +224,15 @@ public class UI {
 
     // Login for customers
     public void customerLoggedIn(BankingDao userDao, Scanner scanner, User user) throws SQLException {
-        System.out.println("*****************Project ZERO Bank*****************");
-        System.out.println("Welcome " + user.getFirstName() + "!");
-        System.out.println(user);
+        System.out.println("Welcome " + user.getFirstName() + " " + user.getLastName()+ "!");
         boolean flag = true;
         while (flag) {
+            System.out.println("*************************Project ZERO Bank*************************");
+            System.out.println("+-----------------+-----------------+-----------------+------------+");
+            System.out.println("|       Name      |     Username    |      Email      |   User ID  |");
+            System.out.println("+-----------------+-----------------+-----------------+------------+");
+            System.out.println(user);
+            System.out.println("+-----------------+-----------------+-----------------+------------+");
             System.out.println("**************************************");
             System.out.println("Select from the options below:");
             System.out.println("Enter 1: Create an account");
@@ -245,22 +249,26 @@ public class UI {
                     BankAccount bankAccount = new BankAccount(user.getId(), accountName);
                     try {
                         userDao.addBankAccount(bankAccount);
-                        System.out.println(ANSI_BLUE+"Account successfully created. Waiting for approval."+ ANSI_RESET);
+                        System.out.println(ANSI_BLUE + "Account successfully created. Waiting for approval." + ANSI_RESET);
                     } catch (SQLException e) {
-                        System.out.println(ANSI_YELLOW+"Looks like something went wrong. Could not create account."+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Looks like something went wrong. Could not create account." + ANSI_RESET);
                     }
                 }
                 case "2" -> {
-                    System.out.println("***********BANK ACCOUNT***********");
+                    System.out.println("**************************Bank Account**************************");
                     Map<Integer, BankAccount> accountsMap = new HashMap<>();
                     try {
                         List<BankAccount> accounts = userDao.getUserBankAccount(user.getId());
+                        System.out.println("+--------------+-----------------+-----------------+------------+");
+                        System.out.println("|  Account ID  |  Account name   | Current Balance |   Status   |");
+                        System.out.println("+--------------+-----------------+-----------------+------------+");
                         for (BankAccount account : accounts) {
                             System.out.println(account);
                             accountsMap.put(account.getAccount_id(), account);
                         }
+                        System.out.println("+--------------+-----------------+-----------------+------------+");
                     } catch (SQLException e) {
-                        System.out.println(ANSI_YELLOW+"Could not find your accounts"+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Could not find your accounts" + ANSI_RESET);
                     }
                     if (!accountsMap.isEmpty()) {
                         System.out.println("Enter account number you wish to use: ");
@@ -269,18 +277,20 @@ public class UI {
                             if (accountsMap.containsKey(accNumber) && userDao.getBankAccountStatus(accNumber)) {
                                 customerBankAccountOptions(userDao, scanner, accountsMap.get(accNumber));
                             } else {
-                                System.out.println(ANSI_YELLOW+"You are not current authorized to use this account"+ ANSI_RESET);
+                                System.out.println(ANSI_YELLOW + "You are not current authorized to use this account" + ANSI_RESET);
                             }
                         } catch (NullPointerException e) {
-                            System.out.println(ANSI_YELLOW+"Cannot process input."+ ANSI_RESET);
+                            System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
                         }
+                    } else {
+                        System.out.println(ANSI_YELLOW+"You don't currently have an account" + ANSI_RESET);
                     }
                 }
                 case "9" -> {
-                    System.out.println(ANSI_BLUE+"Logging out..."+ ANSI_RESET);
+                    System.out.println(ANSI_BLUE + "Logging out..." + ANSI_RESET);
                     flag = false;
                 }
-                default -> System.out.println(ANSI_YELLOW+"Did not receive a valid number"+ ANSI_RESET);
+                default -> System.out.println(ANSI_YELLOW + "Did not receive a valid number" + ANSI_RESET);
             }
         }
     }
@@ -289,12 +299,16 @@ public class UI {
         boolean flag = true;
         while (flag) {
             System.out.println();
-            System.out.println("***********Bank Account***********");
+            System.out.println("**************************Bank Account**************************");
+            System.out.println("+--------------+-----------------+-----------------+------------+");
+            System.out.println("|  Account ID  |  Account name   | Current Balance |   Status   |");
+            System.out.println("+--------------+-----------------+-----------------+------------+");
+            System.out.println(bankAccount);
+            System.out.println("+--------------+-----------------+-----------------+------------+");
             System.out.println("Select from the options below:");
             System.out.print("Enter 1: Deposit\nEnter 2: Withdraw\nEnter 3: Transfer\nEnter 4: View transactions\n");
             System.out.println("Enter 9: Return");
             System.out.println("**************************************");
-            System.out.println(bankAccount);
             String input = scanner.next();
             System.out.println();
             switch (input) {
@@ -304,14 +318,14 @@ public class UI {
                     try {
                         double amount = getDouble();
                         if (amount <= 0) {
-                            System.out.println(ANSI_YELLOW+"Cannot process deposit: " + amount+ ANSI_RESET);
+                            System.out.println(ANSI_YELLOW + "Cannot process deposit: " + amount + ANSI_RESET);
                             continue;
                         }
                         userDao.deposit(bankAccount, amount);
                     } catch (SQLException e) {
-                        System.out.println(ANSI_YELLOW+"Could not process your deposit"+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Could not process your deposit" + ANSI_RESET);
                     } catch (NullPointerException e) {
-                        System.out.println(ANSI_YELLOW+"Cannot process input."+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
                     }
                 }
                 case "2" -> {
@@ -320,12 +334,12 @@ public class UI {
                     try {
                         double amount = getDouble();
                         if (amount <= 0) {
-                            System.out.println(ANSI_YELLOW+"Cannot process withdraw: " + amount+ ANSI_RESET);
+                            System.out.println(ANSI_YELLOW + "Cannot process withdraw: " + amount + ANSI_RESET);
                             continue;
                         }
                         userDao.withdraw(bankAccount, amount);
                     } catch (NullPointerException e) {
-                        System.out.println(ANSI_YELLOW+"Cannot process input."+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
                     }
                 }
                 case "3" -> {
@@ -336,15 +350,15 @@ public class UI {
                         System.out.println("Enter account id to transfer to:");
                         int accountId = getInt();
                         if (amount <= 0) {
-                            System.out.println(ANSI_YELLOW+"Cannot process transfer"+ ANSI_RESET);
+                            System.out.println(ANSI_YELLOW + "Cannot process transfer" + ANSI_RESET);
                             continue;
                         }
                         BankAccount bankAccountTo = userDao.getBankAccountById(accountId);
                         userDao.transfer(bankAccount, bankAccountTo, amount);
                     } catch (SQLException e) {
-                        System.out.println(ANSI_YELLOW+"No account by that id"+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "No account by that id" + ANSI_RESET);
                     } catch (NullPointerException e) {
-                        System.out.println(ANSI_YELLOW+"Cannot process input."+ ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
                     }
                 }
                 case "4" -> printAccountTransactions(userDao, bankAccount.getAccount_id());

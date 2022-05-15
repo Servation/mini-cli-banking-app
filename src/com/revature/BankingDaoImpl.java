@@ -252,7 +252,7 @@ public class BankingDaoImpl implements BankingDao {
         } catch (SQLException e) {
             System.out.println(ANSI_YELLOW + "Could not find transactions." + ANSI_RESET);
         }
-        return null;
+        return new Transaction();
     }
 
     @Override
