@@ -31,7 +31,7 @@ public class BankAccount {
 
     @Override
     public String toString() {
-        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String leftAlightFormat = "| %12d | %15s | %15s | %19s |";
         return String.format(leftAlightFormat,account_id,account_name,decimalFormat.format(balance),status.equalsIgnoreCase("approved") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m");
     }

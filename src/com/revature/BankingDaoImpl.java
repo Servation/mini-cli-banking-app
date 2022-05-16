@@ -51,7 +51,7 @@ public class BankingDaoImpl implements BankingDao {
         List<BankAccount> accounts = new ArrayList<>();
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery(sql);
+        ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
             int accountID = resultSet.getInt(1);
             String accountName = resultSet.getString(2);
@@ -219,7 +219,7 @@ public class BankingDaoImpl implements BankingDao {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, AccountId);
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt(1);
                 int accountId = resultSet.getInt(2);
@@ -242,7 +242,7 @@ public class BankingDaoImpl implements BankingDao {
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 int transactionId = resultSet.getInt(1);
                 int accountId = resultSet.getInt(2);
@@ -264,7 +264,7 @@ public class BankingDaoImpl implements BankingDao {
         String sql = "SELECT status FROM bank_account where account_id=?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, account_id);
-        ResultSet resultSet = statement.executeQuery(sql);
+        ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
             String result = resultSet.getString(1);
             return result.equalsIgnoreCase("approved");

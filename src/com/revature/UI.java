@@ -60,7 +60,7 @@ public class UI {
             if (scanner.next().equalsIgnoreCase("1")) {
                 createAccount(userDao, scanner);
             }
-            System.out.println("Leaving account creation...");
+            System.out.println(ANSI_BLUE + "Leaving account creation..." + ANSI_RESET);
         }
     }
 
@@ -110,7 +110,7 @@ public class UI {
                 case "1" -> employeeGetUserAccounts(userDao, scanner);
                 case "2" -> employeeGetTransactions(userDao, scanner);
                 case "9" -> {
-                    System.out.println("Logging out...");
+                    System.out.println(ANSI_BLUE + "Logging out..." + ANSI_RESET);
                     flag = false;
                 }
                 default -> System.out.println(ANSI_YELLOW + "Did not receive a valid number." + ANSI_RESET);
@@ -224,7 +224,7 @@ public class UI {
 
     // Login for customers
     public void customerLoggedIn(BankingDao userDao, Scanner scanner, User user) throws SQLException {
-        System.out.println("Welcome " + user.getFirstName() + " " + user.getLastName()+ "!");
+        System.out.println("Welcome " + user.getFirstName() + " " + user.getLastName() + "!");
         boolean flag = true;
         while (flag) {
             System.out.println("*************************Project ZERO Bank*************************");
@@ -283,7 +283,7 @@ public class UI {
                             System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
                         }
                     } else {
-                        System.out.println(ANSI_YELLOW+"You don't currently have an account" + ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "You don't currently have an account" + ANSI_RESET);
                     }
                 }
                 case "9" -> {
@@ -356,7 +356,7 @@ public class UI {
                         BankAccount bankAccountTo = userDao.getBankAccountById(accountId);
                         userDao.transfer(bankAccount, bankAccountTo, amount);
                     } catch (SQLException e) {
-                        System.out.println(ANSI_YELLOW + "No account by that id" + ANSI_RESET);
+                        System.out.println(ANSI_YELLOW + "Cannot process transfer" + ANSI_RESET);
                     } catch (NullPointerException e) {
                         System.out.println(ANSI_YELLOW + "Cannot process input." + ANSI_RESET);
                     }
