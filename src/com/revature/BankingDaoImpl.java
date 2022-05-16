@@ -16,8 +16,7 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public void addUser(User user) throws SQLException {
-        String sql = "INSERT INTO user (username, user_password, first_name, last_name, email) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user (username, user_password, first_name, last_name, email) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setString(1, user.getUsername());
         preparedStatement.setString(2, user.getPassword());
@@ -48,9 +47,10 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public List<BankAccount> getUserBankAccount(int id) throws SQLException {
-        String sql = "SELECT * FROM bank_account WHERE user_id =" + id;
+        String sql = "SELECT * FROM bank_account WHERE user_id =?";
         List<BankAccount> accounts = new ArrayList<>();
-        Statement statement = connection.createStatement();
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery(sql);
         while (resultSet.next()) {
             int accountID = resultSet.getInt(1);
@@ -64,9 +64,11 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public User getUserByLogin(String user, String password) throws SQLException {
-        String sql = "SELECT user_id, username, first_name, last_name, email, employee FROM user WHERE username ='" + user + "' AND user_password='" + password + "'";
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
+        String sql = "SELECT user_id, username, first_name, last_name, email, employee FROM user WHERE username =? AND user_password=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, user);
+        statement.setString(2, password);
+        ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
             int id = resultSet.getInt(1);
             String username = resultSet.getString(2);
@@ -89,10 +91,10 @@ public class BankingDaoImpl implements BankingDao {
         int result = preparedStatement.executeUpdate();
         if (result > 0) {
             bankAccount.setBalance(bankAccount.getBalance() + amount);
-            System.out.println(ANSI_BLUE+"Successfully deposited: " + amount + ANSI_RESET);
+            System.out.println(ANSI_BLUE + "Successfully deposited: " + amount + ANSI_RESET);
             transactionRecorder(bankAccount, amount, "deposit", "accepted");
         } else {
-            System.out.println(ANSI_YELLOW + "Could not process your deposit."+ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Could not process your deposit." + ANSI_RESET);
             transactionRecorder(bankAccount, amount, "deposit", "rejected");
         }
     }
@@ -213,9 +215,10 @@ public class BankingDaoImpl implements BankingDao {
     @Override
     public List<Transaction> viewTransactionsByAccountId(int AccountId) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE account_id=" + AccountId;
+        String sql = "SELECT * FROM transactions WHERE account_id=?";
         try {
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, AccountId);
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt(1);
@@ -235,9 +238,10 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public Transaction viewTransactionById(int id) {
-        String sql = "SELECT * FROM transactions WHERE transaction_id=" + id;
+        String sql = "SELECT * FROM transactions WHERE transaction_id=?";
         try {
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery(sql);
             if (resultSet.next()) {
                 int transactionId = resultSet.getInt(1);
@@ -257,8 +261,9 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public boolean getBankAccountStatus(int account_id) throws SQLException {
-        String sql = "SELECT status FROM bank_account where account_id=" + account_id;
-        Statement statement = connection.createStatement();
+        String sql = "SELECT status FROM bank_account where account_id=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, account_id);
         ResultSet resultSet = statement.executeQuery(sql);
         if (resultSet.next()) {
             String result = resultSet.getString(1);
@@ -269,8 +274,9 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public BankAccount getBankAccountById(int bankAccountId) throws SQLException {
-        String sql = "SELECT balance FROM bank_account where account_id=" + bankAccountId;
-        Statement statement = connection.createStatement();
+        String sql = "SELECT balance FROM bank_account where account_id=?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, bankAccountId);
         ResultSet resultSet = statement.executeQuery(sql);
         if (resultSet.next()) {
             return new BankAccount(bankAccountId, resultSet.getDouble(1));
@@ -280,34 +286,36 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public void approveAccount(int id) {
-        String sql = "UPDATE bank_account SET status='approved' WHERE account_id=" + id;
+        String sql = "UPDATE bank_account SET status='approved' WHERE account_id=?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
-                System.out.println(ANSI_BLUE+"Account updated."+ANSI_RESET);
+                System.out.println(ANSI_BLUE + "Account updated." + ANSI_RESET);
             } else {
-                System.out.println(ANSI_YELLOW+"Account could not update."+ANSI_RESET);
+                System.out.println(ANSI_YELLOW + "Account could not update." + ANSI_RESET);
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW+"Could not access account."+ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Could not access account." + ANSI_RESET);
         }
 
     }
 
     @Override
     public void rejectAccount(int id) {
-        String sql = "UPDATE bank_account SET status='rejected' WHERE account_id=" + id;
+        String sql = "UPDATE bank_account SET status='rejected' WHERE account_id=?";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
-                System.out.println(ANSI_BLUE+"Account updated."+ANSI_RESET);
+                System.out.println(ANSI_BLUE + "Account updated." + ANSI_RESET);
             } else {
-                System.out.println(ANSI_YELLOW+"Account could not update."+ANSI_RESET);
+                System.out.println(ANSI_YELLOW + "Account could not update." + ANSI_RESET);
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW+"Could not access account."+ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Could not access account." + ANSI_RESET);
         }
     }
 
@@ -326,7 +334,7 @@ public class BankingDaoImpl implements BankingDao {
                 userInfo.add(row);
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW+"Could not retrieve User Data."+ANSI_RESET);
+            System.out.println(ANSI_YELLOW + "Could not retrieve User Data." + ANSI_RESET);
         }
 
         return userInfo;
