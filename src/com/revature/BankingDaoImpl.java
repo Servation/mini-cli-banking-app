@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BankingDaoImpl implements BankingDao {
-    final private String ANSI_BLUE = "\u001B[34m";
-    final private String ANSI_YELLOW = "\u001B[33m";
-    final private String ANSI_RESET = "\u001B[0m";
     Connection connection;
 
     public BankingDaoImpl() {
@@ -25,9 +22,9 @@ public class BankingDaoImpl implements BankingDao {
         preparedStatement.setString(5, user.getEmail());
         int updates = preparedStatement.executeUpdate();
         if (updates > 0) {
-            System.out.println(ANSI_BLUE + "User account created successfully" + ANSI_RESET);
+            System.out.println(blueText("User account created successfully"));
         } else {
-            System.out.println(ANSI_YELLOW + "Oops! There seems to be a problem..." + ANSI_RESET);
+            System.out.println(yellowText("Oops! There seems to be a problem..."));
         }
     }
 
@@ -39,9 +36,9 @@ public class BankingDaoImpl implements BankingDao {
         preparedStatement.setInt(2, bankAccount.getCustomer_id());
         int updates = preparedStatement.executeUpdate();
         if (updates > 0) {
-            System.out.println(ANSI_BLUE + "Bank account created successfully. Please wait for approval" + ANSI_RESET);
+            System.out.println(blueText("Bank account created successfully. Please wait for approval"));
         } else {
-            System.out.println(ANSI_YELLOW + "Oops! There seems to be a problem..." + ANSI_RESET);
+            System.out.println(yellowText("Oops! There seems to be a problem..."));
         }
     }
 
@@ -91,10 +88,10 @@ public class BankingDaoImpl implements BankingDao {
         int result = preparedStatement.executeUpdate();
         if (result > 0) {
             bankAccount.setBalance(bankAccount.getBalance() + amount);
-            System.out.println(ANSI_BLUE + "Successfully deposited: " + amount + ANSI_RESET);
+            System.out.println(blueText("Successfully deposited: " + amount));
             transactionRecorder(bankAccount, amount, "deposit", "accepted");
         } else {
-            System.out.println(ANSI_YELLOW + "Could not process your deposit." + ANSI_RESET);
+            System.out.println(yellowText("Could not process your deposit."));
             transactionRecorder(bankAccount, amount, "deposit", "rejected");
         }
     }
@@ -110,7 +107,7 @@ public class BankingDaoImpl implements BankingDao {
             preparedStatement.setInt(5, bankAccountTo.getAccount_id());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not record transaction" + ANSI_RESET);
+            System.out.println(yellowText("Could not record transaction"));
         }
     }
 
@@ -124,7 +121,7 @@ public class BankingDaoImpl implements BankingDao {
             statement.setString(4, status);
             statement.execute();
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not record transaction" + ANSI_RESET);
+            System.out.println(yellowText("Could not record transaction"));
         }
     }
 
@@ -133,7 +130,7 @@ public class BankingDaoImpl implements BankingDao {
         try {
             if (amount > bankAccount.getBalance()) {
                 transactionRecorder(bankAccount, amount, "withdraw", "rejected");
-                System.out.println(ANSI_YELLOW + "Not enough funds in balance." + ANSI_RESET);
+                System.out.println(yellowText("Not enough funds in balance."));
                 return;
             }
             String sql = "UPDATE bank_account set balance=? WHERE account_id=?";
@@ -143,14 +140,14 @@ public class BankingDaoImpl implements BankingDao {
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
                 bankAccount.setBalance(bankAccount.getBalance() - amount);
-                System.out.println(ANSI_BLUE + "Successful withdrawal: " + amount + ANSI_RESET);
+                System.out.println(blueText("Successful withdrawal: " + amount));
                 transactionRecorder(bankAccount, amount, "withdraw", "accepted");
             } else {
-                System.out.println(ANSI_YELLOW + "Could not process your withdrawal." + ANSI_RESET);
+                System.out.println(yellowText("Could not process your withdrawal."));
                 transactionRecorder(bankAccount, amount, "withdraw", "rejected");
             }
         } catch (Exception e) {
-            System.out.println(ANSI_YELLOW + "Could not process your withdrawal." + ANSI_RESET);
+            System.out.println(yellowText("Could not process your withdrawal."));
             transactionRecorder(bankAccount, amount, "withdraw", "rejected");
         }
     }
@@ -160,15 +157,17 @@ public class BankingDaoImpl implements BankingDao {
         try {
             if (!getBankAccountStatus(bankAccountTo.getAccount_id()) || amount > bankAccountFrom.getBalance() || bankAccountFrom.getAccount_id() == bankAccountTo.getAccount_id()) {
                 transactionRecorder(bankAccountFrom, amount, "rejected", bankAccountTo);
-                System.out.println(ANSI_YELLOW + "Could not transfer to account: " + bankAccountTo.getAccount_id() + ANSI_RESET);
+                System.out.println(yellowText("Could not transfer to account: " + bankAccountTo.getAccount_id()));
                 return;
             }
             String sql = "UPDATE bank_account set balance=? WHERE account_id=?";
+            System.out.println("here");
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setDouble(1, bankAccountFrom.getBalance() - amount);
             preparedStatement.setInt(2, bankAccountFrom.getAccount_id());
             int first = preparedStatement.executeUpdate();
             sql = "UPDATE bank_account set balance=? WHERE account_id=?";
+            System.out.println("there");
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setDouble(1, bankAccountTo.getBalance() + amount);
             preparedStatement.setInt(2, bankAccountTo.getAccount_id());
@@ -177,14 +176,14 @@ public class BankingDaoImpl implements BankingDao {
             if (result > 0) {
                 bankAccountFrom.setBalance(bankAccountFrom.getBalance() - amount);
                 bankAccountTo.setBalance(bankAccountTo.getBalance() + amount);
-                System.out.println(ANSI_BLUE + "Successfully transfer: " + amount + ANSI_RESET);
+                System.out.println(blueText("Successfully transfer: " + amount));
                 transactionRecorder(bankAccountFrom, amount, "accepted", bankAccountTo);
             } else {
-                System.out.println(ANSI_YELLOW + "Could not process your transfer." + ANSI_RESET);
+                System.out.println(yellowText("Could not process your transfer."));
                 transactionRecorder(bankAccountFrom, amount, "rejected", bankAccountTo);
             }
-        } catch (Exception e) {
-            System.out.println(ANSI_YELLOW + "Could not process your transfer." + ANSI_RESET);
+        } catch (SQLException e) {
+            System.out.println(yellowText("Could not process your transfer."));
             transactionRecorder(bankAccountFrom, amount, "rejected", bankAccountTo);
         }
     }
@@ -207,7 +206,7 @@ public class BankingDaoImpl implements BankingDao {
                 transactions.add(new Transaction(transactionId, accountId, amount, type, accountIdToo, status, date));
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not find transactions." + ANSI_RESET);
+            System.out.println(yellowText("Could not find transactions."));
         }
         return transactions;
     }
@@ -231,7 +230,7 @@ public class BankingDaoImpl implements BankingDao {
                 transactions.add(new Transaction(transactionId, accountId, amount, type, accountIdToo, status, date));
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not find transactions." + ANSI_RESET);
+            System.out.println(yellowText("Could not find transactions."));
         }
         return transactions;
     }
@@ -254,7 +253,7 @@ public class BankingDaoImpl implements BankingDao {
                 return new Transaction(transactionId, accountId, amount, type, accountIdToo, status, date);
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not find transactions." + ANSI_RESET);
+            System.out.println(yellowText("Could not find transactions."));
         }
         return new Transaction();
     }
@@ -277,7 +276,7 @@ public class BankingDaoImpl implements BankingDao {
         String sql = "SELECT balance FROM bank_account where account_id=?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, bankAccountId);
-        ResultSet resultSet = statement.executeQuery(sql);
+        ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
             return new BankAccount(bankAccountId, resultSet.getDouble(1));
         }
@@ -292,12 +291,12 @@ public class BankingDaoImpl implements BankingDao {
             preparedStatement.setInt(1, id);
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
-                System.out.println(ANSI_BLUE + "Account updated." + ANSI_RESET);
+                System.out.println(blueText("Account updated."));
             } else {
-                System.out.println(ANSI_YELLOW + "Account could not update." + ANSI_RESET);
+                System.out.println(yellowText("Account could not update."));
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not access account." + ANSI_RESET);
+            System.out.println(yellowText("Could not access account."));
         }
 
     }
@@ -310,12 +309,12 @@ public class BankingDaoImpl implements BankingDao {
             preparedStatement.setInt(1, id);
             int result = preparedStatement.executeUpdate();
             if (result > 0) {
-                System.out.println(ANSI_BLUE + "Account updated." + ANSI_RESET);
+                System.out.println(blueText("Account updated."));
             } else {
-                System.out.println(ANSI_YELLOW + "Account could not update." + ANSI_RESET);
+                System.out.println(yellowText("Account could not update."));
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not access account." + ANSI_RESET);
+            System.out.println(yellowText("Could not access account."));
         }
     }
 
@@ -334,10 +333,21 @@ public class BankingDaoImpl implements BankingDao {
                 userInfo.add(row);
             }
         } catch (SQLException e) {
-            System.out.println(ANSI_YELLOW + "Could not retrieve User Data." + ANSI_RESET);
+            System.out.println(yellowText("Could not retrieve User Data."));
         }
 
         return userInfo;
+    }
+    private String blueText(String text) {
+        final String ANSI_BLUE = "\u001B[34m";
+        final String ANSI_RESET = "\u001B[0m";
+        return ANSI_BLUE + text + ANSI_RESET;
+    }
+
+    private String yellowText(String text) {
+        final String ANSI_YELLOW = "\u001B[33m";
+        final String ANSI_RESET = "\u001B[0m";
+        return ANSI_YELLOW + text + ANSI_RESET;
     }
 
 }

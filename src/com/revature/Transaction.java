@@ -30,9 +30,20 @@ public class Transaction {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         String leftAlightFormat = "| %12d | %10s | %15s | %10s | %13s | %19s | %10s |";
         if (type.equalsIgnoreCase("transfer")){
-            return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type, accountIdTo, status.equalsIgnoreCase("accepted") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m", date);
+            return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type.toUpperCase(), accountIdTo, status.equalsIgnoreCase("accepted") ? greenText(status.toUpperCase()) : redText(status.toUpperCase()), date);
         }
-        return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type, "", status.equalsIgnoreCase("accepted") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m", date);
+        return String.format(leftAlightFormat, transactionId, accountId, decimalFormat.format(amount), type.toUpperCase(), "", status.equalsIgnoreCase("accepted") ? greenText(status.toUpperCase()): redText(status.toUpperCase()), date);
+    }
+    private String greenText(String text) {
+        final String ANSI_GREEN = "\u001B[32m";
+        final String ANSI_RESET = "\u001B[0m";
+        return ANSI_GREEN + text + ANSI_RESET;
+    }
+
+    private String redText(String text) {
+        final String ANSI_RED = "\u001B[31m";
+        final String ANSI_RESET = "\u001B[0m";
+        return ANSI_RED + text + ANSI_RESET;
     }
 
 }

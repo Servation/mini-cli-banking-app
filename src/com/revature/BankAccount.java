@@ -33,7 +33,7 @@ public class BankAccount {
     public String toString() {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String leftAlightFormat = "| %12d | %15s | %15s | %19s |";
-        return String.format(leftAlightFormat,account_id,account_name,decimalFormat.format(balance),status.equalsIgnoreCase("approved") ? "\u001B[32m" + status + "\u001B[0m" : "\u001B[31m" + status + "\u001B[0m");
+        return String.format(leftAlightFormat,account_id,account_name.toUpperCase(),decimalFormat.format(balance),status.equalsIgnoreCase("approved") ? greenText(status.toUpperCase()) : redText(status.toUpperCase()));
     }
 
     public int getAccount_id() {
@@ -54,6 +54,18 @@ public class BankAccount {
 
     public String getAccount_name() {
         return account_name;
+    }
+
+    private String greenText(String text) {
+        final String ANSI_GREEN = "\u001B[32m";
+        final String ANSI_RESET = "\u001B[0m";
+        return ANSI_GREEN + text + ANSI_RESET;
+    }
+
+    private String redText(String text) {
+        final String ANSI_RED = "\u001B[31m";
+        final String ANSI_RESET = "\u001B[0m";
+        return ANSI_RED + text + ANSI_RESET;
     }
 
 }

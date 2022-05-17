@@ -7,11 +7,9 @@ import java.util.ResourceBundle;
 
 public class ConnectionFactory {
     private static Connection connection = null;
-
     private ConnectionFactory() {
 
     }
-
     public static Connection getConnection(){
         if (connection == null) {
             ResourceBundle bundle = ResourceBundle.getBundle("com/revature/dbConfig");
@@ -28,7 +26,6 @@ public class ConnectionFactory {
         }
         return connection;
     }
-
     public static void closeConnection() {
         try {
             connection.close();
