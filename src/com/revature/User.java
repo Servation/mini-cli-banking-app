@@ -2,10 +2,10 @@ package com.revature;
 
 public class User {
     private final String username;
-    private String password;
     private final String firstName;
     private final String lastName;
     private final String email;
+    private String password;
     private int id;
     private boolean employee;
 
@@ -57,6 +57,7 @@ public class User {
     @Override
     public String toString() {
         String leftAlightFormat = "| %15s | %15s | %15s | %10d |";
-        return String.format(leftAlightFormat, firstName.toUpperCase() + " " + lastName.toUpperCase(), username.toUpperCase(), email.toUpperCase(), id);
+        return String.format(leftAlightFormat, firstName.toUpperCase() + " " + lastName.toUpperCase(),
+                username.toUpperCase(), email.toUpperCase(), id);
     }
 }

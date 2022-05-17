@@ -17,7 +17,7 @@ public class BankAccount {
     }
 
     public BankAccount(int account_id, double balance) {
-        this.account_id =account_id;
+        this.account_id = account_id;
         this.balance = balance;
     }
 
@@ -33,7 +33,8 @@ public class BankAccount {
     public String toString() {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         String leftAlightFormat = "| %12d | %15s | %15s | %19s |";
-        return String.format(leftAlightFormat,account_id,account_name.toUpperCase(),decimalFormat.format(balance),status.equalsIgnoreCase("approved") ? greenText(status.toUpperCase()) : redText(status.toUpperCase()));
+        return String.format(leftAlightFormat, account_id, account_name.toUpperCase(), decimalFormat.format(balance),
+                status.equalsIgnoreCase("approved") ? greenText(status.toUpperCase()) : redText(status.toUpperCase()));
     }
 
     public int getAccount_id() {

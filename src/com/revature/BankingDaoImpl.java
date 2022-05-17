@@ -61,7 +61,8 @@ public class BankingDaoImpl implements BankingDao {
 
     @Override
     public User getUserByLogin(String user, String password) throws SQLException {
-        String sql = "SELECT user_id, username, first_name, last_name, email, employee FROM user WHERE username =? AND user_password=?";
+        String sql = "SELECT user_id, username, first_name, last_name, email, employee FROM user WHERE username =? " +
+                "AND user_password=?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, user);
         statement.setString(2, password);
@@ -321,7 +322,8 @@ public class BankingDaoImpl implements BankingDao {
     @Override
     public List<String[]> getUserDetails() {
         List<String[]> userInfo = new ArrayList<>();
-        String sql = "SELECT b.account_id, b.account_name, b.user_id, u.username, u.first_name, u.last_name, b.balance, u.email, b.status FROM bank_account b INNER JOIN user u ON b.user_id = u.user_id";
+        String sql = "SELECT b.account_id, b.account_name, b.user_id, u.username, u.first_name, u.last_name, b" +
+                ".balance, u.email, b.status FROM bank_account b INNER JOIN user u ON b.user_id = u.user_id";
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -338,6 +340,7 @@ public class BankingDaoImpl implements BankingDao {
 
         return userInfo;
     }
+
     private String blueText(String text) {
         final String ANSI_BLUE = "\u001B[34m";
         final String ANSI_RESET = "\u001B[0m";

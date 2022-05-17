@@ -4,9 +4,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class UI {
-    private boolean exitFlag = true;
     private final BankingDao dao;
     private final Scanner scanner;
+    private boolean exitFlag = true;
 
     public UI(BankingDao bankingDao) {
         dao = bankingDao;
@@ -109,7 +109,7 @@ public class UI {
                 case "1" -> employeeGetUserAccounts();
                 case "2" -> employeeGetTransactions();
                 case "8" -> {
-                    System.out.println(blueText("Logging out..." ));
+                    System.out.println(blueText("Logging out..."));
                     flag = false;
                 }
                 case "9" -> exit();
@@ -136,22 +136,30 @@ public class UI {
                 switch (input) {
                     case "1" -> {
                         List<Transaction> transactions = dao.viewAllTransactions();
-                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
-                        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   |         Date        |%n");
-                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format(
+                                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID" +
+                                " |   Status   |         Date        |%n");
+                        System.out.format(
+                                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                         for (Transaction transaction : transactions) {
                             System.out.println(transaction);
                         }
-                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format(
+                                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                     }
                     case "2" -> {
                         System.out.println("Enter transaction id: ");
                         int transactionId = getInputInt();
-                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
-                        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   |         Date        |%n");
-                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format(
+                                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID" +
+                                " |   Status   |         Date        |%n");
+                        System.out.format(
+                                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                         System.out.println(dao.viewTransactionById(transactionId));
-                        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+                        System.out.format(
+                                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                     }
                     case "3" -> {
                         System.out.println("Enter account id: ");
@@ -174,7 +182,8 @@ public class UI {
         while (flag && exitFlag) {
             System.out.println("**************************************");
             System.out.println("Select from the options below:");
-            System.out.print("Enter 1: View bank accounts \nEnter 2: View bank account by user ID\nEnter 3: Change account status\n");
+            System.out.print("Enter 1: View bank accounts \nEnter 2: View bank account by user ID\nEnter 3: Change " +
+                    "account status\n");
             System.out.println("Enter 8: Return");
             System.out.println("Enter 9: Exit");
             System.out.println("**************************************");
@@ -182,7 +191,7 @@ public class UI {
             System.out.println();
             switch (input) {
                 case "1" -> printUserDetails();
-                case "2" ->{
+                case "2" -> {
                     System.out.println("Enter user ID:");
                     try {
                         int id = getInputInt();
@@ -231,13 +240,21 @@ public class UI {
     private void printUserDetails() {
         String leftAlightFormat = "| %12s | %15s | %9s | %15s | %15s | %15s | %15s | %17s | %24s |%n";
         List<String[]> userInfo = dao.getUserDetails();
-        System.out.format("+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-------------------|-----------------+%n");
-        System.out.format("|  Account ID  | Account Name    |  User ID  |     Username    |    First Name   |     Last Name   |     Balance     |       Email       |      Status     |%n");
-        System.out.format("+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-------------------|-----------------+%n");
+        System.out.format(
+                "+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-------------------|-----------------+%n");
+        System.out.format("|  Account ID  | Account Name    |  User ID  |     Username    |    First Name   |     " +
+                "Last Name   |     Balance     |       Email       |      Status     |%n");
+        System.out.format(
+                "+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-------------------|-----------------+%n");
         for (String[] account : userInfo) {
-            System.out.format(leftAlightFormat, account[0], account[1].toUpperCase(), account[2], account[3].toUpperCase(), account[4].toUpperCase(), account[5].toUpperCase(), account[6], account[7].toUpperCase(), account[8].equals("approved") ? "\u001B[32m" + account[8].toUpperCase() + "\u001B[0m" : "\u001B[31m" + account[8].toUpperCase() + "\u001B[0m");
+            System.out.format(leftAlightFormat, account[0], account[1].toUpperCase(), account[2],
+                    account[3].toUpperCase(), account[4].toUpperCase(), account[5].toUpperCase(), account[6],
+                    account[7].toUpperCase(), account[8].equals("approved") ?
+                            "\u001B[32m" + account[8].toUpperCase() + "\u001B[0m" :
+                            "\u001B[31m" + account[8].toUpperCase() + "\u001B[0m");
         }
-        System.out.format("+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-------------------|-----------------+%n");
+        System.out.format(
+                "+--------------+-----------------+-----------+-----------------+-----------------+-----------------+-----------------+-------------------|-----------------+%n");
     }
 
 
@@ -347,7 +364,7 @@ public class UI {
                         }
                         dao.deposit(bankAccount, amount);
                     } catch (SQLException e) {
-                        System.out.println(yellowText("Could not process your deposit") );
+                        System.out.println(yellowText("Could not process your deposit"));
                     } catch (NullPointerException | InputMismatchException e) {
                         System.out.println(yellowText("Cannot process input."));
                         scanner.nextLine();
@@ -400,17 +417,21 @@ public class UI {
     private void printAccountTransactions(int id) {
         List<Transaction> transactions = dao.viewTransactionsByAccountId(id);
         System.out.println("***********Bank Transactions***********");
-        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
-        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   |         Date        |%n");
-        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+        System.out.format(
+                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+        System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID |   Status   | " +
+                "        Date        |%n");
+        System.out.format(
+                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
         for (Transaction transaction : transactions) {
             System.out.println(transaction);
         }
-        System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
+        System.out.format(
+                "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
     }
 
 
-    public Integer getInputInt() {
+    private Integer getInputInt() {
         try {
             return scanner.nextInt();
         } catch (InputMismatchException e) {
@@ -431,7 +452,7 @@ public class UI {
         return ANSI_YELLOW + text + ANSI_RESET;
     }
 
-    private void exit(){
+    private void exit() {
         exitFlag = false;
     }
 }
