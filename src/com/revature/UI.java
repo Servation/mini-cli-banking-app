@@ -8,8 +8,8 @@ public class UI {
     private final Scanner scanner;
     private boolean exitFlag = true;
 
-    public UI(BankingDao bankingDao) {
-        dao = bankingDao;
+    public UI() {
+        dao = BankingDaoFactory.dao;
         scanner = new Scanner(System.in);
         boolean flag = true;
 

@@ -8,9 +8,9 @@ public class UIFactory {
 
     }
 
-    public static void getUserInterface(BankingDao dao) {
+    public static void getUserInterface() {
         if (UI == null) {
-            UI = new UI(dao);
+            UI = new UI();
         }
     }
 }
