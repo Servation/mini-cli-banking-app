@@ -1,11 +1,11 @@
 package com.revature;
 
 public class User {
-    private String username;
+    private final String username;
     private String password;
-    private String firstName;
-    private String lastName;
-    private String email;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
     private int id;
     private boolean employee;
 

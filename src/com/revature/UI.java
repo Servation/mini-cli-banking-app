@@ -242,7 +242,7 @@ public class UI {
 
 
     // Login for customers
-    private void customerLoggedIn(User user) throws SQLException {
+    private void customerLoggedIn(User user) {
         System.out.println("Welcome " + user.getFirstName().toUpperCase() + "!");
         boolean flag = true;
         while (flag && exitFlag) {
@@ -301,6 +301,8 @@ public class UI {
                             }
                         } catch (NullPointerException e) {
                             System.out.println(yellowText("Cannot process input."));
+                        } catch (SQLException e) {
+                            System.out.println(yellowText("Could not access account."));
                         }
                     } else {
                         System.out.println(yellowText("You don't currently have an account"));
@@ -338,7 +340,7 @@ public class UI {
                     System.out.println("***********Bank Deposit***********");
                     System.out.println("Enter amount to deposit: ");
                     try {
-                        double amount = getInputDouble();
+                        double amount = scanner.nextDouble();
                         if (amount <= 0) {
                             System.out.println(yellowText("Cannot process deposit: " + amount));
                             continue;
@@ -346,29 +348,31 @@ public class UI {
                         dao.deposit(bankAccount, amount);
                     } catch (SQLException e) {
                         System.out.println(yellowText("Could not process your deposit") );
-                    } catch (NullPointerException e) {
+                    } catch (NullPointerException | InputMismatchException e) {
                         System.out.println(yellowText("Cannot process input."));
+                        scanner.nextLine();
                     }
                 }
                 case "2" -> {
                     System.out.println("***********Bank Withdraw***********");
                     System.out.println("Enter amount to withdraw: ");
                     try {
-                        double amount = getInputDouble();
+                        double amount = scanner.nextDouble();
                         if (amount <= 0) {
                             System.out.println(yellowText("Cannot process withdraw: " + amount));
                             continue;
                         }
                         dao.withdraw(bankAccount, amount);
-                    } catch (NullPointerException e) {
+                    } catch (NullPointerException | InputMismatchException e) {
                         System.out.println(yellowText("Cannot process input."));
+                        scanner.nextLine();
                     }
                 }
                 case "3" -> {
                     System.out.println("***********Bank Transfer***********");
                     try {
                         System.out.println("Enter amount to transfer: ");
-                        double amount = getInputDouble();
+                        double amount = scanner.nextDouble();
                         System.out.println("Enter account id to transfer to:");
                         int accountId = getInputInt();
                         if (amount <= 0) {
@@ -379,8 +383,9 @@ public class UI {
                         dao.transfer(bankAccount, bankAccountTo, amount);
                     } catch (SQLException e) {
                         System.out.println(yellowText("Cannot process transfer"));
-                    } catch (NullPointerException e) {
+                    } catch (NullPointerException | InputMismatchException e) {
                         System.out.println(yellowText("Cannot process input."));
+                        scanner.nextLine();
                     }
                 }
                 case "4" -> printAccountTransactions(bankAccount.getAccount_id());
@@ -404,18 +409,8 @@ public class UI {
         System.out.format("+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
     }
 
-    private Double getInputDouble() {
-        Scanner scanner = new Scanner(System.in);
-        try {
-            return scanner.nextDouble();
-        } catch (InputMismatchException e) {
-            scanner.nextLine();
-        }
-        return null;
-    }
 
     public Integer getInputInt() {
-        Scanner scanner = new Scanner(System.in);
         try {
             return scanner.nextInt();
         } catch (InputMismatchException e) {
