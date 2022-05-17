@@ -215,10 +215,11 @@ public class BankingDaoImpl implements BankingDao {
     @Override
     public List<Transaction> viewTransactionsByAccountId(int AccountId) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "SELECT * FROM transactions WHERE account_id=?";
+        String sql = "SELECT * FROM transactions WHERE account_id=? OR account_id_to=?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, AccountId);
+            statement.setInt(2, AccountId);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int transactionId = resultSet.getInt(1);

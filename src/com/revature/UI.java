@@ -30,6 +30,7 @@ public class UI {
             }
 
         }
+        System.out.println(blueText("Exiting program..."));
         ConnectionFactory.closeConnection();
     }
 
@@ -150,7 +151,7 @@ public class UI {
                     }
                     case "2" -> {
                         System.out.println("Enter transaction id: ");
-                        int transactionId = getInputInt();
+                        int transactionId = scanner.nextInt();
                         System.out.format(
                                 "+--------------+------------+-----------------+------------+---------------+------------+---------------------+%n");
                         System.out.format("|Transaction ID| Account ID |      Amount     |    Type    | To Account ID" +
@@ -163,15 +164,16 @@ public class UI {
                     }
                     case "3" -> {
                         System.out.println("Enter account id: ");
-                        int accountId = getInputInt();
+                        int accountId = scanner.nextInt();
                         printAccountTransactions(accountId);
                     }
                     case "8" -> flag = false;
                     case "9" -> exit();
                     default -> System.out.println(yellowText("Did not receive a valid number."));
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException | InputMismatchException e) {
                 System.out.println(yellowText("Cannot process input."));
+                scanner.nextLine();
             }
         }
     }
@@ -182,8 +184,11 @@ public class UI {
         while (flag && exitFlag) {
             System.out.println("**************************************");
             System.out.println("Select from the options below:");
-            System.out.print("Enter 1: View bank accounts \nEnter 2: View bank account by user ID\nEnter 3: Change " +
-                    "account status\n");
+            System.out.print("""
+                    Enter 1: View bank accounts\s
+                    Enter 2: View bank account by user ID
+                    Enter 3: Change account status
+                    """);
             System.out.println("Enter 8: Return");
             System.out.println("Enter 9: Exit");
             System.out.println("**************************************");
@@ -194,7 +199,7 @@ public class UI {
                 case "2" -> {
                     System.out.println("Enter user ID:");
                     try {
-                        int id = getInputInt();
+                        int id = scanner.nextInt();
                         List<BankAccount> accounts = dao.getUserBankAccount(id);
                         System.out.println("+--------------+-----------------+-----------------+------------+");
                         System.out.println("|  Account ID  |  Account name   | Current Balance |   Status   |");
@@ -205,8 +210,9 @@ public class UI {
                         System.out.println("+--------------+-----------------+-----------------+------------+");
                     } catch (SQLException e) {
                         System.out.println(yellowText("Could not find accounts"));
-                    } catch (NullPointerException e) {
+                    } catch (NullPointerException |InputMismatchException e) {
                         System.out.println(yellowText("Cannot process input."));
+                        scanner.nextLine();
                     }
                 }
                 case "3" -> employeeChangeAccountStatus();
@@ -221,7 +227,7 @@ public class UI {
         try {
             System.out.println("*****************Change Account Status*****************");
             System.out.println("Enter Account ID: ");
-            int accountID = getInputInt();
+            int accountID = scanner.nextInt();
             System.out.println("Enter 1: Approve \nEnter 2: Reject");
             System.out.println("**************************************");
             String input = scanner.next();
@@ -230,8 +236,9 @@ public class UI {
                 case "1" -> dao.approveAccount(accountID);
                 case "2" -> dao.rejectAccount(accountID);
             }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | InputMismatchException e) {
             System.out.println(yellowText("Cannot process input."));
+            scanner.nextLine();
         } catch (Exception e) {
             System.out.println(yellowText("Could not find account"));
         }
@@ -310,14 +317,15 @@ public class UI {
                     if (!accountsMap.isEmpty()) {
                         System.out.println("Enter account number you wish to use: ");
                         try {
-                            int accNumber = getInputInt();
+                            int accNumber = scanner.nextInt();
                             if (accountsMap.containsKey(accNumber) && dao.getBankAccountStatus(accNumber)) {
                                 customerBankAccountOptions(accountsMap.get(accNumber));
                             } else {
                                 System.out.println(yellowText("You are not current authorized to use this account"));
                             }
-                        } catch (NullPointerException e) {
+                        } catch (NullPointerException | InputMismatchException e) {
                             System.out.println(yellowText("Cannot process input."));
+                            scanner.nextLine();
                         } catch (SQLException e) {
                             System.out.println(yellowText("Could not access account."));
                         }
@@ -391,7 +399,7 @@ public class UI {
                         System.out.println("Enter amount to transfer: ");
                         double amount = scanner.nextDouble();
                         System.out.println("Enter account id to transfer to:");
-                        int accountId = getInputInt();
+                        int accountId = scanner.nextInt();
                         if (amount <= 0) {
                             System.out.println(yellowText("Cannot process transfer"));
                             continue;
@@ -431,14 +439,7 @@ public class UI {
     }
 
 
-    private Integer getInputInt() {
-        try {
-            return scanner.nextInt();
-        } catch (InputMismatchException e) {
-            scanner.nextLine();
-        }
-        return null;
-    }
+
 
     private String blueText(String text) {
         final String ANSI_BLUE = "\u001B[34m";
